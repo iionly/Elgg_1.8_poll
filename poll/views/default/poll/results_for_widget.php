@@ -26,7 +26,7 @@ if (isset($vars['entity'])) {
 	$user_responses_count = $vars['entity']->countAnnotations('vote');
 
 	$allow_open_poll = elgg_get_plugin_setting('allow_open_poll', 'poll');
-	if ($allow_open_poll) {
+	if ($allow_open_poll == 'yes') {
 		$open_poll = ($vars['entity']->open_poll == 1);
 	} else {
 		$open_poll = false;
@@ -41,7 +41,7 @@ if (isset($vars['entity'])) {
 
 		$voted_users = '';
 		// show members if this poll is an open poll or if an admin is logged in (in the latter case open polls must be enabled in plugin settings)
-		if (($open_poll || ($allow_open_poll && elgg_is_admin_logged_in()))) {
+		if (($open_poll || (($allow_open_poll == 'yes') && elgg_is_admin_logged_in()))) {
 			$vote_id++;
 			$response_annotations = elgg_get_annotations(array(
 				'guid' => $vars['entity']->guid,

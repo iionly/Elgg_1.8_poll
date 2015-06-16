@@ -44,7 +44,28 @@ function poll_get_choice_array($poll) {
 	return $responses;
 }
 
+/**
+ * Delete all votes associated with this poll and delete associated vote river items
+ */
+function deleteVotes($poll) {
+	elgg_delete_river(array(
+		'view' => 'river/object/poll/vote',
+		'action_type' => 'vote',
+		'object_guid' => $poll->guid,
+	));
+
+	elgg_delete_annotations(array(
+		'guid' => $poll->guid,
+		'type' => "object",
+		'subtype' => "poll",
+		'annotation_name' => "vote",
+	));
+}
+
 function poll_add_choices($poll, $choices) {
+	// Ignore access (necessary in case a group admin is editing the poll of another group member)
+	$ia = elgg_set_ignore_access(true);
+
 	$i = 0;
 	if ($choices) {
 		foreach($choices as $choice) {
@@ -60,6 +81,8 @@ function poll_add_choices($poll, $choices) {
 			$i += 1;
 		}
 	}
+
+	elgg_set_ignore_access($ia);
 }
 
 function poll_delete_choices($poll) {
@@ -74,6 +97,32 @@ function poll_delete_choices($poll) {
 function poll_replace_choices($poll, $new_choices) {
 	poll_delete_choices($poll);
 	poll_add_choices($poll, $new_choices);
+}
+
+/**
+ * Check for changes in poll choices on editing of a poll and update choices if necessary
+ * If an update is necessary the existing votes get deleted
+ */
+function poll_update_choices($poll, $choices) {
+	$choices_changed = false;
+	$old_choices = poll_get_choices($poll);
+
+	if (count($choices) != count($old_choices)) {
+		$choices_changed = true;
+	} else {
+		$i = 0;
+		foreach ($old_choices as $old_choice) {
+			if ($old_choice->text != $choices[$i]) {
+				$choices_changed = true;
+			}
+			$i += 1;
+		}
+	}
+
+	if ($choices_changed) {
+		deleteVotes($poll);
+		poll_replace_choices($poll, $choices);
+	}
 }
 
 function poll_activated_for_group($group) {

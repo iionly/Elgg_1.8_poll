@@ -1,6 +1,6 @@
 Poll plugin for Elgg 1.8
-Latest Version: 1.8.3
-Released: 2015-05-14
+Latest Version: 1.8.4
+Released: 2015-06-16
 Contact: iionly@gmx.de
 License: GNU General Public License version 2
 Copyright: (C) iionly, (C) Kevin Jardine, (C) John Mellberg and Dr Sanu P Moideen
@@ -16,14 +16,20 @@ With this new release I've tried to merge the two classes of the poll(s) plugin 
 
 Installation:
 
-(0. If you have a previous version of the poll plugin installed, first disable the poll plugin and remove the poll plugin folder of the old version from your mod folder,)
-1. Copy the poll plugin folder into you mod folder,
-2. Enable the Poll plugin in the admin section of your site,
-3. Check the Poll plugin settings and adjust the settings according to your preference.
+1. If you have a previous version of the poll plugin installed, first disable the poll plugin and remove the poll plugin folder of the old version from your mod folder,
+2. Copy the poll plugin folder into you mod folder,
+3. Enable the Poll plugin in the admin section of your site,
+4. Check the Poll plugin settings and adjust the settings according to your preference.
 
 
 
 Changelog:
+
+1.8.4:
+
+- Total reset of votes when editing a poll (adding/removing choices or modifying existing choices). Problem was that users who already voted were unable to re-vote after poll choices had been changed. This could have been quite annoying for them if they wanted to change their vote based on the updated choices (a mischievous person would have even been able to switch the choices to contradict the poll results completely!). The only way to make it fair seemed to me to reset the votes to allow everyone a re-vote. Downside is that even correcting a typo in a poll choice text will reset the poll but his is unavoidable unfortunately,
+- Fixed bug where poll choices of a group poll got lost when poll was edited by the group admin but the poll is owned by another group member,
+- Fixed bug that prevented the description of a poll to be completely removed.
 
 1.8.3:
 

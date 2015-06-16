@@ -58,7 +58,7 @@ if ($guid) {
 				$poll->description = $description;
 			} else {
 				if (!empty($poll->description)) {
-					$poll->deleteMetadata('description');
+					unset($poll->description);
 				}
 			}
 
@@ -77,8 +77,7 @@ if ($guid) {
 
 			elgg_clear_sticky_form('poll');
 
-			poll_delete_choices($poll);
-			poll_add_choices($poll, $new_choices);
+			poll_update_choices($poll, $new_choices);
 			poll_manage_front_page($poll, $front_page);
 
 			if (is_array($tagarray)) {
@@ -94,6 +93,17 @@ if ($guid) {
 			}
 
 			$poll->open_poll = (!$open_poll) ? 0 : 1;
+
+			$poll_create_in_river = elgg_get_plugin_setting('create_in_river', 'poll');
+			if ($poll_create_in_river != 'no') {
+				// first remove any previous river entries referring to updating this poll to avoid duplicate entries
+				elgg_delete_river(array(
+					'view' => 'river/object/poll/update',
+					'action_type' => 'update',
+					'object_guid' => $poll->guid,
+				));
+				add_to_river('river/object/poll/update', 'update' , $poll->getOwnerEntity()->guid, $poll->guid);
+			}
 
 			// Success message
 			system_message(elgg_echo("poll:edited"));
